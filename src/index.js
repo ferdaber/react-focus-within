@@ -26,7 +26,10 @@ export class FocusWithin extends React.Component {
         // check if the focus manager was focused from the outside
         // and not from another child element
         if (!this.isBlurring && !prevState.isFocused && this.state.isFocused && this.props.onFocus) {
-            this.props.onFocus()
+            // delay onfocus emission here to be consistent with how blurring works
+            // focusing from one FocusWithin to another will preserve the order: focus
+            // on the target gets emitted before the blur on the source
+            setTimeout(this.props.onFocus)
         }
     }
 

@@ -2,13 +2,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export class FocusWithin extends React.Component {
-    static propTypes = {
-        onBlur: PropTypes.func,
-        onFocus: PropTypes.func
-    }
-
-    state = {
-        isFocused: false
+    constructor() {
+        super()
+        this.state = {
+            isFocused: false
+        }
     }
 
     componentDidUpdate(_, prevState) {
@@ -44,6 +42,10 @@ export class FocusWithin extends React.Component {
               })
             : null
     }
+}
+FocusWithin.propTypes = {
+    onBlur: PropTypes.func,
+    onFocus: PropTypes.func
 }
 
 export default FocusWithin

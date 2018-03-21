@@ -1,5 +1,16 @@
 A React component that gives you `:focus-within` behavior.
 
+### Table of Contents
+
+- [Why?](#why)
+- [Why Not?](#why-not)
+- [Setup](#setup)
+- [Simple Usage](#simple-usage)
+- [Event Handling](#event-handling)
+- [Nesting](#nesting)
+- [Props API](#props-api)
+- [Other API](#other-api)
+
 ### Why?
 
 Focus management across children is a pain to manage until browsers implement the `:focus-within` pseudoselector. Use this if you have run into some of these issues:

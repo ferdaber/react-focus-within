@@ -85,6 +85,8 @@ const Form = () => (
             <div
                 {...focusProps}
                 style={{
+                    // you can also pass in a special class name depending on isFocused
+                    // which would be the more maintainable CSS way
                     border: isFocused ? '1px solid red' : 'none'
                 }}
             >
@@ -95,6 +97,34 @@ const Form = () => (
             </div>
         )}
     </FocusWithin>
+)
+```
+
+`FocusWithin` can also be used as a higher order component, wrapping a container such that it reacts to all of its children's focus events and it will receive a prop called `isFocused` when anything in its React subtree is focused (this includes portals in React 16). When combined with CSS-in-JS constructs, this can lead to very awesome and convenient styling:
+
+```jsx
+import { withFocusWithin } from 'react-focus-within'
+import styled from 'styled-components'
+
+const FormSection = withFocusWithin(styled.div`
+  background: ${ props => props.isFocused ? props.focusedColor || 'gray' : 'none' };
+`)
+
+const BigForm = () => (
+    <div>
+        <FormSection focusedColor="lightblue">
+            <input placeholder="Section A" />
+            <button>Submit</button>
+        </FormSection>
+        <FormSection focusedColor="tomato">
+            <input placeholder="Section B" />
+            <button>Submit</button>
+        </FormSection>
+        <FormSection focusedColor="hotpink">
+            <input placeholder="Section C" />
+            <button>Submit</button>
+        </FormSection>
+    </div>
 )
 ```
 

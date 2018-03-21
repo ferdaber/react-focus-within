@@ -45,12 +45,30 @@ const Form = () => (
         )}
     </FocusWithin>
 )
+
+// works very well with CSS-in-JS
+const StyledForm = withFocusWithin(styled.div`
+    background: ${props => (props.isFocused ? focusedBackgroundColor : 'none')};
+`)
+
+const Form = () => (
+    <StyledForm>
+        <input />
+        <button>Submit</button>
+    </StyledForm>
+)
 ```
 
 ### Setup
 
 ```
 npm install react-focus-within
+```
+
+```js
+import FocusWithin from 'react-focus-within'
+import { FocusWithin } from 'react-focus-within'
+import { withFocusWithin } from 'react-focus-within'
 ```
 
 ### Simple Usage
@@ -65,13 +83,14 @@ const Form = () => (
     <FocusWithin>
         {({ focusProps, isFocused }) => (
             <div
+                {...focusProps}
                 style={{
                     border: isFocused ? '1px solid red' : 'none'
                 }}
             >
                 <form>
-                    <input {...focusProps} />
-                    <button {...focusProps}>Submit</button>
+                    <input />
+                    <button>Submit</button>
                 </form>
             </div>
         )}
@@ -82,11 +101,14 @@ const Form = () => (
 ### Event Handling
 
 `FocusWithin` emits `onFocus` and `onBlur` events when the user enters or leaves its managed children, it will not emit events when a user goes from one managed child to another.
+**You will not need this much power most of the time unless you need precise timing and frequency of `onFocus` and `onBlur` event emissions.**
 
 ```jsx
 import { FocusWithin } from 'react-focus-within'
 
-// the form container will emit events correctly when a user enters or leaves it
+// the form container will only emit onFocus and onBlur if they completely leave the form
+// it will not emit either events if they are moving focus between the input and the button
+// which is different than the default React behavior
 const Form = () => (
     <FocusWithin
         onFocus={() => console.log('Someone is trying to enter things into me!')}
@@ -110,27 +132,11 @@ const Form = () => (
 
 ### Nesting
 
-Because `FocusWithin` itself will emit `onFocus` and `onBlur` events, you can nest multiple `FocusWithin`s! This can be handy when you want to segregate focus states in a composite UI.
+Because `FocusWithin` itself will emit `onFocus` and `onBlur` events, you can nest multiple `FocusWithin`s. This can be handy when you want to segregate focus states in a composite UI.
 
 ```jsx
 import { FocusWithin } from 'react-focus-within'
-
-const Form = ({ onBlur, onFocus }) => (
-    <FocusWithin onBlur={onBlur} onFocus={onFocus}>
-        {({ focusProps, isFocused }) => (
-            <div
-                style={{
-                    border: isFocused ? '1px solid red' : 'none'
-                }}
-            >
-                <form>
-                    <input {...focusProps} />
-                    <button {...focusProps}>Submit</button>
-                </form>
-            </div>
-        )}
-    </FocusWithin>
-)
+import Form from 'example-above'
 
 // if the user is inside the second form, the overall container will have a background,
 // but only the second form will have a red border
@@ -138,13 +144,14 @@ const BigForm = () => (
     <FocusWithin>
         {({ focusProps, isFocused }) => (
             <div
+                {...focusProps}
                 style={{
                     background: isFocused ? 'gray' : 'none'
                 }}
             >
-                <Form {...focusProps} />
-                <Form {...focusProps} />
-                <Form {...focusProps} />
+                <Form />
+                <Form />
+                <Form />
             </div>
         )}
     </FocusWithin>
@@ -154,7 +161,6 @@ const BigForm = () => (
 Currently, mixing managed `FocusWithin`s and other managed component types is not supported:
 
 ```jsx
-// this will not work correctly
 const MixedForm = () => (
     <FocusWithin>
         {({ focusProps, isFocused }) => (
@@ -163,39 +169,18 @@ const MixedForm = () => (
                     background: isFocused ? 'gray' : 'none'
                 }}
             >
+                {/* this will not work correctly */}
                 <Form {...focusProps} />
                 <Form {...focusProps} />
                 <input {...focusProps} />
-            </div>
-        )}
-    </FocusWithin>
-)
 
-// these will work fine because all managed children are either nested FocusWithin's or other components
-const OkayForm = () => (
-    <FocusWithin>
-        {({ focusProps, isFocused }) => (
-            <div
-                style={{
-                    background: isFocused ? 'gray' : 'none'
-                }}
-            >
+                {/* these will work */}
                 <Form {...focusProps} />
                 <Form {...focusProps} />
-                <input />
-            </div>
-        )}
-    </FocusWithin>
-)
-const OkayFormToo = () => (
-    <FocusWithin>
-        {({ focusProps, isFocused }) => (
-            <div
-                style={{
-                    background: isFocused ? 'gray' : 'none'
-                }}
-            >
-                <Form />
+                <Form {...focusProps} />
+
+                {/* these will work too */}
+                <input {...focusProps} />
                 <input {...focusProps} />
                 <input {...focusProps} />
             </div>
@@ -204,11 +189,13 @@ const OkayFormToo = () => (
 )
 ```
 
-If you still want it to work correctly, you will have to wrap the non-`FocusWithin` managed children inside one, to help with that there is a static HOC method available in `FocusWithin` called `wrapComponent`:
+You should not run into this problem most of the time; you can just spread `focusProps` to the container that you want to style since `onFocus` and `onBlur` will bubble up to it.
+
+If you still need to individually manage each child, you will have to wrap the non-`FocusWithin` managed children inside one. The module exports an HOC function called `withFocusWithin` and a static method in `FocusWithin` called `wrapComponent` (they are the same) to help with that:
 
 ```jsx
-const WrappedNativeInput = FocusWithin.wrapComponent('input')
-const WrappedOtherComponent = FocusWithin.wrapComponent(OtherComponent)
+const WrappedNativeInput = FocusWithin.wrapComponent('input') // same as withFocusWithin('input')
+const WrappedOtherComponent = FocusWithin.wrapComponent(OtherComponent) // same as withFocusWithin(OtherComponent)
 
 const OkayMixedForm = () => (
     <FocusWithin>
@@ -221,20 +208,8 @@ const OkayMixedForm = () => (
                 <Form {...focusProps} />
                 <WrappedNativeInput {...focusProps} />
                 <WrappedOtherComponent {...focusProps} />
-            </div>
-        )}
-    </FocusWithin>
-)
 
-// above is equivalent to this but is shorter
-const AlsoOkayMixedForm = () => (
-    <FocusWithin>
-        {({ focusProps, isFocused }) => (
-            <div
-                style={{
-                    background: isFocused ? 'gray' : 'none'
-                }}
-            >
+                {/* equivalent to: */}
                 <Form {...focusProps} />
                 <FocusWithin {...focusProps}>{({ focusProps }) => <input {...focusProps} />}</FocusWithin>
                 <FocusWithin {...focusProps}>{({ focusProps }) => <OtherComponent {...focusProps} />}</FocusWithin>
@@ -244,7 +219,7 @@ const AlsoOkayMixedForm = () => (
 )
 ```
 
-**Why is this?** This is due to how native or passthrough `onBlur` and `onFocus` events are triggered immediately by React, whereas the `onBlur` and `onFocus` events triggered by other `FocusWithin` components are delayed by a `setTimeout` to determine if focus actually has changed inside it, which can lead to out-of-order event triggering when the two are mixed. _This solution is not great_ and if you have any suggestions, feel free to open a PR!
+**Why is this?** This is due to how native or passthrough `onBlur` and `onFocus` events are triggered immediately by React, whereas the `onBlur` and `onFocus` events triggered by other `FocusWithin` components are delayed by a `setTimeout` to determine if focus actually has changed inside it, which can lead to out-of-order event triggering when the two are mixed. **Again, you should not be encountering this in common usage.**
 
 ### Props API
 
@@ -264,6 +239,7 @@ type renderProps = {
 
 > ⚠️ If you are wrapping the event handlers in `focusProps` before applying it to managed children, make sure to pass the native `event` object back to the original `onBlur` and `onFocus` events, `FocusWithin` relies on this to determine if an event was emitted from a native DOM element or a nested `FocusWithin` element
 
-### Static API
+### Other API
 
-*   `FocusWithin.wrapComponent(Component) => ReactComponent` - use as a workaround to quickly wrap a non-`FocusWithin` component for use when mixing managed `FocusWithin` children with other component types that are managed.
+*   `withFocusWithin(Component) => ReactComponent` - use as a quick wrapper around a container component, the container element will receive an `isFocused` prop if any of its children are focused. The `isFocused` prop will not be passed in if you are wrapping a native DOM component, since it does not understand `isFocused` as an attribute.
+*   `FocusWithin.wrapComponent` - this is exactly the same as `withFocusWithin`

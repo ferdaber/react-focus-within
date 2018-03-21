@@ -2,6 +2,22 @@ import React from 'react'
 import { unstable_batchedUpdates } from 'react-dom'
 import PropTypes from 'prop-types'
 
+export function withFocusWithin(Component) {
+    const WrappedComponent = ({ onFocus, onBlur, ...props }) => (
+        <FocusWithin onFocus={onFocus} onBlur={onBlur}>
+            {({ focusProps, isFocused }) =>
+                typeof Component === 'string' ? (
+                    <Component {...props} {...focusProps} />
+                ) : (
+                    <Component {...props} {...focusProps} isFocused={isFocused} />
+                )
+            }
+        </FocusWithin>
+    )
+    WrappedComponent.displayName = `WithFocusWithin({Component.displayName || Component.name || 'Component'})`
+    return WrappedComponent
+}
+
 export class FocusWithin extends React.Component {
     static propTypes = {
         onBlur: PropTypes.func,
@@ -13,15 +29,7 @@ export class FocusWithin extends React.Component {
         onFocus: () => {}
     }
 
-    static wrapComponent(Component) {
-        const WrappedComponent = ({ onFocus, onBlur, ...props }) => (
-            <FocusWithin onFocus={onFocus} onBlur={onBlur}>
-                {({ focusProps }) => <Component {...props} {...focusProps} />}
-            </FocusWithin>
-        )
-        WrappedComponent.displayName = `WithFocusWithin({Component.displayName || Component.name || 'Component'})`
-        return WrappedComponent
-    }
+    static wrapComponent = wrapComponent
 
     state = {
         isFocused: false

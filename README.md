@@ -8,6 +8,45 @@ Focus management across children is a pain to manage until browsers implement th
 *   You want to know if a user has left a form but not when a user is simply moving between the form elements inside it.
 *   You want to style an element based on the focus state of two intricately linked elements, but those elements are not near each other on the DOM tree (imagine a button that opens a fixed popup at the root, even though they are physically placed next to each other)
 
+### Why Not?
+
+Note that unlike native DOM `focus` and `blur` events, the `onFocus` and `onBlur` events in React bubble, this means that you can usually get away with those event handlers if you want to simply react to those events, however you will still not be able to apply the `:focus` pseudoselector unless it is the exact element being focused. Using `FocusWithin` can save you time:
+
+```jsx
+//without FocusWithin
+class Form extends React.Component {
+    state = {
+        isFocused: false
+    }
+
+    render() {
+        // color the form if either the input or button are focused
+        return (
+            <form
+                style={{ background: this.state.isFocused ? focusedBackgroundColor : 'none' }}
+                onFocus={() => this.setState({ isFocused: true })}
+                onBlur={() => this.setState({ isFocused: false })}
+            >
+                <input />
+                <button>Submit</button>
+            </form>
+        )
+    }
+}
+
+// with FocusWIthin
+const Form = () => (
+    <FocusWithin>
+        {({ isFocused, focusProps }) => (
+            <form {...focusProps} style={{ background: isFocused ? focusedBackgroundColor : 'none' }}>
+                <input />
+                <button>Submit</button>
+            </form>
+        )}
+    </FocusWithin>
+)
+```
+
 ### Setup
 
 ```

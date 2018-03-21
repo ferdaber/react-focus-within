@@ -32,18 +32,29 @@ export class FocusWithin extends React.Component {
     static wrapComponent = withFocusWithin
 
     state = {
+        isBlurring: false,
         isFocused: false
     }
 
-    delayedSetState = newState => event => {
-        const eventType = newState.isFocused ? 'focus' : 'blur'
-        const setStateCb = () =>
-            this.setState(state => {
-                if (state.isFocused === newState.isFocused) {
-                    return state
-                }
-                return newState
-            })
+    setFocusState = isFocused => event => {
+        // delay processing native events for one turn of the event loop
+        // to have it be on the same timing as FocusWithin events
+        const setStateCb = () => {
+            if (this.isUnmounted) return
+            this.setState(
+                state =>
+                    state.isFocused === isFocused
+                        ? state
+                        : !isFocused
+                            ? {
+                                  isFocused,
+                                  isBlurring: true
+                              }
+                            : {
+                                  isFocused
+                              }
+            )
+        }
         if (event && event.__isFocusWithinEvent) {
             setStateCb()
         } else {
@@ -53,9 +64,10 @@ export class FocusWithin extends React.Component {
 
     componentDidUpdate(_, prevState) {
         if (prevState.isFocused && !this.state.isFocused) {
-            this.isBlurring = true
             setTimeout(() => {
-                this.isBlurring = false
+                this.setState({
+                    isBlurring: false
+                })
                 // check if the focus manager is actually blurred for times
                 // when document click causes a consective blur -> focus
                 if (!this.state.isFocused) {
@@ -65,24 +77,27 @@ export class FocusWithin extends React.Component {
         }
         // check if the focus manager was focused from the outside
         // and not from another child element
-        if (!this.isBlurring && !prevState.isFocused && this.state.isFocused) {
-            // delay onfocus emission here to be consistent with how blurring works
-            // focusing from one FocusWithin to another will preserve the order: focus
-            // on the target gets emitted before the blur on the source
+        // delay onfocus emission to be on the same timing as blur events
+        if (!this.state.isBlurring && !prevState.isFocused && this.state.isFocused) {
             setTimeout(() => {
                 this.props.onFocus({ __isFocusWithinEvent: true })
             })
         }
     }
 
+    componentWillUnmount() {
+        this.isUnmounted = true
+    }
+
     render() {
         return this.props.children
             ? this.props.children({
                   focusProps: {
-                      onBlur: this.delayedSetState({ isFocused: false }),
-                      onFocus: this.delayedSetState({ isFocused: true })
+                      onBlur: this.setFocusState(false),
+                      onFocus: this.setFocusState(true)
                   },
-                  isFocused: this.state.isFocused
+                  // stabilize isFocused so that it only changes corresponding to its event emissions
+                  isFocused: this.state.isFocused || this.state.isBlurring
               })
             : null
     }

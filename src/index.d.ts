@@ -1,4 +1,4 @@
-import { ComponentClass, ReactNode } from 'react'
+import { ComponentClass, ComponentType, ReactNode, ReactHTML, StatelessComponent } from 'react'
 
 export interface FocusWithinRenderProps {
     focusProps: {
@@ -14,5 +14,10 @@ export interface FocusWithinProps {
     children?(renderProps: FocusWithinRenderProps): ReactNode
 }
 
-export const FocusWithin: ComponentClass<FocusWithinProps>
+interface FocusWithinComponent extends ComponentClass<FocusWithinProps> {
+    wrapComponent<P>(Component: ComponentType<P>): StatelessComponent<P>
+    wrapComponent<P extends keyof ReactHTML>(NativeComponent: P): ReactHTML[P]
+}
+
+export const FocusWithin: FocusWithinComponent
 export default FocusWithin

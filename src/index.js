@@ -29,7 +29,7 @@ export class FocusWithin extends React.Component {
         onFocus: () => {}
     }
 
-    static wrapComponent = wrapComponent
+    static wrapComponent = withFocusWithin
 
     state = {
         isFocused: false

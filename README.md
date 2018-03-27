@@ -86,6 +86,8 @@ import { withFocusWithin } from 'react-focus-within'
 
 `FocusWithin` uses `children` as a function that is passed an object containing `focusProps` and `isFocused`, the `focusProps` should be spread over all children that you want to manage (i.e. any focusable element inside it that can contribute to the focus state), the `isFocused` boolean is the main payload of the component and will tell you if the user has any of them focused.
 
+Note that `isFocused` is guaranteed to be stable, meaning that if focus is transitioning from one element to another from inside a managed child, `isFocused` will not be set to `false` and then `true` consecutively. This can be very useful if you are rendering some elements conditionally based on `isFocused`, which ensures that React does not unmount those components needlessly, causing state to be lost.
+
 ```jsx
 import { FocusWithin } from 'react-focus-within'
 

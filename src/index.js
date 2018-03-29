@@ -14,7 +14,7 @@ export function withFocusWithin(Component) {
             }
         </FocusWithin>
     )
-    WrappedComponent.displayName = `WithFocusWithin({Component.displayName || Component.name || 'Component'})`
+    WrappedComponent.displayName = `WithFocusWithin(${Component.displayName || Component.name || 'Component'})`
     return WrappedComponent
 }
 
@@ -62,6 +62,10 @@ export class FocusWithin extends React.Component {
         }
     }
 
+    blur = this.setFocusState(false)
+
+    focus = this.setFocusState(true)
+
     componentDidUpdate(_, prevState) {
         if (prevState.isFocused && !this.state.isFocused) {
             setTimeout(() => {
@@ -93,8 +97,8 @@ export class FocusWithin extends React.Component {
         return this.props.children
             ? this.props.children({
                   focusProps: {
-                      onBlur: this.setFocusState(false),
-                      onFocus: this.setFocusState(true)
+                      onBlur: this.blur,
+                      onFocus: this.focus
                   },
                   // stabilize isFocused so that it only changes corresponding to its event emissions
                   isFocused: this.state.isFocused || this.state.isBlurring

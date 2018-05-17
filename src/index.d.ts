@@ -1,16 +1,19 @@
 import { ComponentClass, ComponentType, ReactNode, ReactHTML, StatelessComponent } from 'react'
 
 export interface FocusWithinRenderProps {
-    focusProps: {
-        onFocus(event?: object): void
-        onBlur(event?: object): void
-    }
+    getFocusProps<P>(
+        props?: P
+    ): {
+        onFocus(event: object): void
+        onBlur(event: object): void
+        onMouseDown(event: object): void
+    } & P
     isFocused: boolean
 }
 
 export interface FocusWithinProps {
-    onFocus?(event?: object): void
-    onBlur?(event?: object): void
+    onFocus?(event: {}): void
+    onBlur?(event: {}): void
     children?(renderProps: FocusWithinRenderProps): ReactNode
 }
 

@@ -2,14 +2,14 @@ A React component that gives you `:focus-within` behavior.
 
 ### Table of Contents
 
-- [Why?](#why)
-- [Why Not?](#why-not)
-- [Setup](#setup)
-- [Simple Usage](#simple-usage)
-- [Event Handling](#event-handling)
-- [Nesting](#nesting)
-- [Props API](#props-api)
-- [Other API](#other-api)
+*   [Why?](#why)
+*   [Why Not?](#why-not)
+*   [Setup](#setup)
+*   [Simple Usage](#simple-usage)
+*   [Event Handling](#event-handling)
+*   [Nesting](#nesting)
+*   [Props API](#props-api)
+*   [Other API](#other-api)
 
 ### Why?
 
@@ -27,7 +27,7 @@ Note that unlike native DOM `focus` and `blur` events, the `onFocus` and `onBlur
 //without FocusWithin
 class Form extends React.Component {
     state = {
-        isFocused: false
+        isFocused: false,
     }
 
     render() {
@@ -100,7 +100,7 @@ const Form = () => (
                 style={{
                     // you can also pass in a special class name depending on isFocused
                     // which would be the more maintainable CSS way
-                    border: isFocused ? '1px solid red' : 'none'
+                    border: isFocused ? '1px solid red' : 'none',
                 }}
             >
                 <form>
@@ -120,7 +120,7 @@ import { withFocusWithin } from 'react-focus-within'
 import styled from 'styled-components'
 
 const FormSection = withFocusWithin(styled.div`
-  background: ${ props => props.isFocused ? props.focusedColor || 'gray' : 'none' };
+    background: ${props => (props.isFocused ? props.focusedColor || 'gray' : 'none')};
 `)
 
 const BigForm = () => (
@@ -160,7 +160,7 @@ const Form = () => (
         {({ focusProps, isFocused }) => (
             <div
                 style={{
-                    border: isFocused ? '1px solid red' : 'none'
+                    border: isFocused ? '1px solid red' : 'none',
                 }}
             >
                 <form>
@@ -189,7 +189,7 @@ const BigForm = () => (
             <div
                 {...focusProps}
                 style={{
-                    background: isFocused ? 'gray' : 'none'
+                    background: isFocused ? 'gray' : 'none',
                 }}
             >
                 <Form />
@@ -209,7 +209,7 @@ const MixedForm = () => (
         {({ focusProps, isFocused }) => (
             <div
                 style={{
-                    background: isFocused ? 'gray' : 'none'
+                    background: isFocused ? 'gray' : 'none',
                 }}
             >
                 {/* this will not work correctly */}
@@ -245,7 +245,7 @@ const OkayMixedForm = () => (
         {({ focusProps, isFocused }) => (
             <div
                 style={{
-                    background: isFocused ? 'gray' : 'none'
+                    background: isFocused ? 'gray' : 'none',
                 }}
             >
                 <Form {...focusProps} />
@@ -276,9 +276,18 @@ type renderProps = {
         onBlur: Function
         onFocus: Function
     }
+    getFocusProps({
+        originalProps: object,
+    }): {
+        onBlur: Function
+        onFocus: Function
+        onMouseDown: Function
+    }
     isFocused: boolean
 }
 ```
+
+> ℹ️ You can use `getFocusProps` if you plan on implementing other effects for the following events: `onBlur`, `onFocus`, and `onMouseDown`, by passing those into `getFocusProps` it will call your event handlers first before its own. You can prevent default behavior of `FocusWithin` handlers by setting `event.focusWithinDefaultPrevented = true` or returning `false` in the event handler itself. `focusProps` is just a shorthand that calls `getFocusProps` with an empty object.
 
 > ⚠️ If you are wrapping the event handlers in `focusProps` before applying it to managed children, make sure to pass the native `event` object back to the original `onBlur` and `onFocus` events, `FocusWithin` relies on this to determine if an event was emitted from a native DOM element or a nested `FocusWithin` element
 

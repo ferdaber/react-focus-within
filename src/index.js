@@ -92,14 +92,14 @@ export class FocusWithin extends React.Component {
             ...props,
             onFocus: event => {
                 const propagationStopped = onFocus && onFocus(event) === false
-                if (propagationStopped || event.focusWithinDefaultPrevented) {
+                if (propagationStopped || (event && event.focusWithinDefaultPrevented)) {
                     return
                 }
                 this.setFocusState(true, event && event.__isFocusWithinEvent)
             },
             onBlur: event => {
                 const propagationStopped = onBlur && onBlur(event) === false
-                if (propagationStopped || event.focusWithinDefaultPrevented) {
+                if (propagationStopped || (event && event.focusWithinDefaultPrevented)) {
                     return
                 }
                 // if blur event happens right after a mousedown of an element inside the FocusWithin container
@@ -113,7 +113,7 @@ export class FocusWithin extends React.Component {
             },
             onMouseDown: event => {
                 const propagationStopped = onMouseDown && onMouseDown(event) === false
-                if (propagationStopped || event.focusWithinDefaultPrevented) {
+                if (propagationStopped || (event && event.focusWithinDefaultPrevented)) {
                     return
                 }
                 this.mouseDownWithinTarget = event.currentTarget

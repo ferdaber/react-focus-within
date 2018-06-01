@@ -1,6 +1,6 @@
 {
     "name": "react-focus-within",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "A React-based \"polyfill\" for a focus-within-like experience.",
     "main": "lib/index",
     "types": "lib/index.d.ts",

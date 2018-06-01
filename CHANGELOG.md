@@ -1,3 +1,8 @@
+### v2.0.1
+
+*   Bug fixes:
+    *   Safely check event objects in case events are dispatched with an undefined event parameter.
+
 ### v2.0.0
 
 *   New features:

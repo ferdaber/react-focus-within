@@ -1,6 +1,7 @@
 import { ComponentClass, ComponentType, ReactNode, ReactHTML, StatelessComponent } from 'react'
 
 export interface FocusWithinRenderProps {
+    focusProps: FocusWithinProps;
     getFocusProps<P>(
         props?: P
     ): {

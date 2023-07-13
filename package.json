@@ -1,44 +1,44 @@
 {
-    "name": "react-focus-within",
-    "version": "2.0.2",
-    "description": "A React-based \"polyfill\" for a focus-within-like experience.",
-    "main": "lib/index",
-    "types": "lib/index.d.ts",
-    "module": "lib/index.esm.js",
-    "sideEffects": false,
-    "scripts": {
-        "clean": "rm -rf lib && mkdir lib",
-        "create-transpiled": "babel --no-babelrc src/index.js -o lib/index.js --source-maps --presets=env,stage-2,react",
-        "create-module": "babel src/index.js -o lib/index.esm.js --source-maps",
-        "create-types": "cp src/index.d.ts lib/index.d.ts",
-        "build": "npm run clean && npm run create-transpiled && npm run create-module && npm run create-types",
-        "prepublishOnly": "npm run build"
-    },
-    "publishConfig": {
-        "registry": "https://registry.npmjs.org"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/ferdaber/react-focus-within"
-    },
-    "keywords": [
-        "react",
-        "focus",
-        "within"
-    ],
-    "author": "Ferdy Budhidharma",
-    "license": "ISC",
-    "devDependencies": {
-        "babel-cli": "^6.26.0",
-        "babel-preset-env": "^1.6.1",
-        "babel-preset-react": "^6.24.1",
-        "babel-preset-stage-2": "^6.24.1"
-    },
-    "peerDependencies": {
-        "react": "^15.0.0 || ^16.0.0"
-    },
-    "dependencies": {
-        "@types/react": "^15.0.0 || ^16.0.0",
-        "prop-types": "^15.6.1"
-    }
+  "name": "react-focus-within",
+  "version": "2.0.2",
+  "description": "A React-based \"polyfill\" for a focus-within-like experience.",
+  "main": "lib/index",
+  "types": "lib/index.d.ts",
+  "module": "lib/index.esm.js",
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rm -rf lib && mkdir lib",
+    "create-transpiled": "babel --no-babelrc src/index.js -o lib/index.js --source-maps --presets=env,stage-2,react",
+    "create-module": "babel src/index.js -o lib/index.esm.js --source-maps",
+    "create-types": "cp src/index.d.ts lib/index.d.ts",
+    "build": "npm run clean && npm run create-transpiled && npm run create-module && npm run create-types",
+    "prepublishOnly": "npm run build"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ferdaber/react-focus-within"
+  },
+  "keywords": [
+    "react",
+    "focus",
+    "within"
+  ],
+  "author": "Ferdy Budhidharma",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1"
+  },
+  "peerDependencies": {
+    "react": ">=15.0.0"
+  },
+  "dependencies": {
+    "@types/react": "^15.0.0 || ^16.0.0",
+    "prop-types": "^15.6.1"
+  }
 }
